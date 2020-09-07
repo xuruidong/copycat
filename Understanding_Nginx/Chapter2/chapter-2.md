@@ -102,8 +102,28 @@
     worker_connection number;
 
 ## 2.4 用HTTP核心模块配置一个静态Web服务器
-    一个典型的静态web服务器可能会包含多个server块和localtion 块。  
-    静态web服务器的部分功能：虚拟主机与请求分发；文件路径定义；内存及磁盘资源的分配；网络连接设置；MIME类型的设置；客户端请求限制；文件操作优化；对客户端请求的特殊处理。
+一个典型的静态web服务器可能会包含多个server块和localtion 块。  
+静态web服务器的部分功能：虚拟主机与请求分发；文件路径定义；内存及磁盘资源的分配；网络连接设置；MIME类型的设置；客户端请求限制；文件操作优化；对客户端请求的特殊处理。
 
 ### 2.4.1 虚拟主机与请求的分发
-    可以实现多个主机域名共同使用一个IP地址。
+可以实现多个主机域名共同使用一个IP地址。
+配置多个server块，指定不同的server_name， listen 可以相同也可不同。
+
+location
+```
+location = / {
+    #只有当用户请求是"/"时，才会使用该location下的配置
+    …
+}
+```
+
+### 2.4.2文件路径的定义
+#### 以root方式设置资源路径
+```
+location /download/ {
+    root optwebhtml;
+}
+```
+如果有一个请求的URI是/download/index/test.html, 那么web服务器将会返回服务器上PREFIX/optwebhtml/download/index/test.html文件的内容。
+
+#### 以alisa方式设置资源路径
