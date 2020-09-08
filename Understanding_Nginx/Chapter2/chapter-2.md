@@ -23,6 +23,8 @@
 3. error日志设置
    error_log pathfile level;
    pathfile 默认为logs/error.log
+
+   调试时，可以设置为标准输出 `error_log  /dev/stdout  notice;`, 同时在http 块或server块设置access日志 `access_log  /dev/stdout ;`
 4. 特殊调试点
     debug_points[stop|abort]
 
@@ -118,7 +120,7 @@ location = / {
 ```
 
 ### 2.4.2文件路径的定义
-#### 以root方式设置资源路径
+#### (1) 以root方式设置资源路径
 ```
 location /download/ {
     root optwebhtml;
@@ -126,4 +128,32 @@ location /download/ {
 ```
 如果有一个请求的URI是/download/index/test.html, 那么web服务器将会返回服务器上PREFIX/optwebhtml/download/index/test.html文件的内容。
 
-#### 以alisa方式设置资源路径
+#### (2) 以alisa方式设置资源路径
+alias 会将用户请求映射到真正的磁盘文件上。例如用户请求的URI是/conf/nginx.conf， 而用户实际想访问的文件在/usr/local/nginx-1.5.9/conf/nginx.conf, 那么可以采用如下配置：
+```
+location /conf {
+    alias   /usr/local/nginx-1.5.9/conf;
+}
+```
+nginx是将location path 替换为 alias path
+
+#### (3) 访问首页
+index file...;
+
+#### (4) 根据HTTP返回码重定向页面
+对于某个请求返回错误码时，如果匹配上了error_page中设置的code,则重定向到新的URI中。这里的重定向不是只代表重定向到某个url, 本地的某个文件也属于新的URI。
+```
+error_page 404 404.html;
+error_page 502 503 504 50x.html;
+error_page 403 http://example.com/forbidden.html; 
+error_page 404 = @fetch;
+```
+可以修改返回的code.
+
+#### (5) 是否允许递归使用error_page
+
+#### (6) try_files
+
+### 2.4.3 内存及磁盘资源的分配
+
+### 2.4.4 网络连接设置
